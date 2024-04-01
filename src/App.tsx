@@ -8,6 +8,29 @@ type Tarefa = {
   concluido: boolean;
 };
 
+type Publicacao = {
+  userId: number,
+  id: number;
+  titulo: string;
+  body: string;
+};
+
+type Usuario = {
+  id: number,
+  name: string;
+  username: string;
+  email: string;
+  phone: string;
+  website: string;
+};
+
+type Album = {
+  userId: number,
+  id: number;
+  title: string;
+};
+
+
 const ListaDeTarefas = () => {
   const [tarefas, setTarefas] = useState([]);
   const escutarCliqueAcessarAPI = () => {
@@ -45,15 +68,122 @@ const ItemTarefa = (props: {titulo: string}) => {
 }
 
 const ListaDePublicacoes = () => {
-  return null;
+  const [publicacoes, setPublicacoes] = useState([]);
+  const escutarCliqueAcessarAPI = () => {
+    axios.get("https://jsonplaceholder.typicode.com/posts").then((resposta: AxiosResponse) => {
+      const dados = resposta.data.map((item: { userid: number; id: number; title: string; body: string; }) => {
+        return {
+          userId: item.userid,
+          id: item.id,
+          titulo: item.title,
+          body: item.body,
+        };
+      });
+      setPublicacoes(dados);
+    });
+  };
+  
+  return (
+    <>
+      <h4>Publicações</h4>
+      <div>
+        <button onClick={escutarCliqueAcessarAPI}>Atualizar lista de publicacoes</button>
+      </div>
+      <div>
+        {
+          publicacoes.map((item: Publicacao) => {
+            return <ItemPublicacao key={item.id} body={item.body} titulo={item.titulo} />
+          })
+        }
+      </div>
+    </>
+  );
+}
+
+const ItemPublicacao = (props: {titulo: string, body: string}) => {
+  return (<>{props.titulo}:<p>{props.body}</p></>);
 }
 
 const ListaDeUsuarios = () => {
-  return null;
+  const [usuarios, setUsuarios] = useState([]);
+  const escutarCliqueAcessarAPI = () => {
+    axios.get("https://jsonplaceholder.typicode.com/users").then((resposta: AxiosResponse) => {
+      const dados = resposta.data.map((item: { id: number; name: string; username: string; email: string; phone: string; website: string; }) => {
+        return {
+          id: item.id,
+          name: item.name,
+          username: item.username,
+          email: item.email,
+          phone: item.phone,
+          website: item.website,
+        };
+      });
+      setUsuarios(dados);
+    });
+  };
+  
+  return (
+    <>
+      <h4>Usuários</h4>
+      <div>
+        <button onClick={escutarCliqueAcessarAPI}>Atualizar lista de usuarios</button>
+      </div>
+      <div>
+        {
+          usuarios.map((item: Usuario) => {
+            return <ItemUsuario key={item.id} name={item.name} username={item.username} email={item.email} phone={item.phone} website={item.website}/>
+          })
+        }
+      </div>
+    </>
+  );
+}
+
+const ItemUsuario = (props: {name: string, username: string, email: string, phone: string, website: string}) => {
+  return (
+    <>
+      <p>{props.username} - ({props.name})</p>
+      <p>email: {props.email}</p>
+      <p>phone: {props.phone}</p>
+      <a href={props.website}>site: {props.website}</a>
+    </>
+  );
 }
 
 const ListaDeAlbuns = () => {
-  return null;
+  const [albuns, setAlbuns] = useState([]);
+  const escutarCliqueAcessarAPI = () => {
+    axios.get("https://jsonplaceholder.typicode.com/albums").then((resposta: AxiosResponse) => {
+      const dados = resposta.data.map((item: { userId: number; id: number; title: string; }) => {
+        return {
+          userId: item.userId,
+          id: item.id,
+          title: item.title,
+        };
+      });
+      setAlbuns(dados);
+    });
+  };
+  
+  return (
+    <>
+      <h4>Albuns</h4>
+      <div>
+        <button onClick={escutarCliqueAcessarAPI}>Atualizar lista de albuns</button>
+      </div>
+      <ul>
+        {
+          albuns.map((item: Album) => {
+            return <ItemAlbum key={item.id} title={item.title} />
+          })
+        }
+      </ul>
+    </>
+  );
+}
+
+const ItemAlbum = (props: {title: string}) => {
+  return (<li>{props.title}</li>);
 }
 
 const App = () => {
@@ -62,8 +192,8 @@ const App = () => {
       <h1>Infoweb - React</h1>
       <ListaDeTarefas />
       <ListaDePublicacoes />
-      <ListaDeAlbuns />
       <ListaDeUsuarios />
+      <ListaDeAlbuns />
     </div>
   );
 }
